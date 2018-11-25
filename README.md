@@ -7,10 +7,13 @@ pip install -r requirements.txt
 ```
 
 ## Download the xray dataset
-Run the script `build_dataset.py` to crop and save the images. By default, these images will locate at `data/preprocess`:
+Run the script `train.py` to start training. Look at the options in the training file:
 ```bash
-python build_dataset.py --data_dir data/xray_images --output_dir data/preprocess --num_val 5000
+python train.py
 ```
+
+## Note
+Right now it would contain bugs since I have not test it yet
 
 
 
