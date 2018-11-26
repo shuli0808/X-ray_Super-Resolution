@@ -22,9 +22,6 @@ __C.TRAIN.WEIGHT_DECAY = 0.0005
 # Factor for reducing the learning rate
 __C.TRAIN.GAMMA = 0.1
 
-# The time interval (in epoch) for saving tensorflow summaries
-__C.TRAIN.SUMMARY_INTERVAL = 1
-
 # Minibatch size 
 __C.TRAIN.BATCH_SIZE = 128
 

@@ -3,3 +3,18 @@ models/*
 output/*
 logs/*
 
+# Python
+*.pyc
+*.pyd
+*/*.pyc
+*/**/__pycache__
+
+# Editor temporaries
+*.swn
+*.swo
+*.swp
+*.swm
+
+# macOS dir files
+.DS_Store
+

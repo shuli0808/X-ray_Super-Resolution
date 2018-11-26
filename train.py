@@ -4,11 +4,14 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, TensorBoard, ModelChec
 from tensorflow.keras.models import load_model
 import argparse
 import h5py
+import os
+import pprint
+import numpy as np
 
 from lib.models.srcnn import Srcnn
 from lib.datasets import xray
 from lib.config import cfg
-from build_dataset import build_dataset
+from lib.utils import build_dataset
 
 
 def parse_args():
@@ -18,7 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Train a Fast R-CNN network')
     parser.add_argument('--dataset', dest='dataset',
                         help='training dataset',
-                        default='xray_image', type=str)
+                        default='xray_images', type=str)
     parser.add_argument('--start_epoch', dest='start_epoch',
                         help='starting epoch',
                         default=1, type=int)
@@ -43,8 +46,8 @@ def parse_args():
     parser.add_argument('--channels', dest='channels',
                         help='Number of channels',
                         default=3, type=int)
-    parser.add_argument('--num_val', default=5000, type=int, help="Number of
-                        validation image")
+    parser.add_argument('--num_val', default=5000, type=int, 
+                        help="Number of validation image")
 
     # config optimization
     parser.add_argument('--o', dest='optimizer',
@@ -115,8 +118,8 @@ if __name__ == '__main__':
         model = Srcnn(cfg.INPUT_IMAGE_SIZE, cfg.OUTPUT_LABEL_SIZE,
                       cfg.CHANNELS)
         # The compile step specifies the training configuration.
-        model.compile(optimizer=tf.train.MomentumOptimizer(cfg.LEARNING_RATE,
-                                                           cfg.MOMENTUM),
+        model.compile(optimizer=tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
+                                                           cfg.TRAIN.MOMENTUM),
                       loss=tf.losses.mean_squared_error, 
                       metrics=[rmse])
 

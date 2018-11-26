@@ -17,9 +17,11 @@ We'll take args.num_val (5000) of "train_images_xxx" as val set.
 
 import os
 import sys
+import numpy as np
 
 from PIL import Image
 from tqdm import tqdm
+import tensorflow as tf
 from tensorflow.keras.preprocessing.image import load_img as load_img
 from tensorflow.keras.preprocessing.image import img_to_array as img_to_array
 from lib.config import cfg, cfg_from_file, cfg_from_list
@@ -58,8 +60,8 @@ def build_dataset(prebuilt=False):
     test_image_filenames = np.array([os.path.join(test_images_dir, f) for f in 
                                      filenames if f.endswith('.png')])
 
-    print('Original dataset contains {:d} training images, and {:d} testing
-          imaegs'.format(len(image_filenames), len(test_image_filenames)))
+    print('Original dataset contains {:d} training images, and {:d} testing imaegs'.format(
+        len(image_filenames), len(test_image_filenames)))
 
     # Split the images in 'train_images'
     # Make sure to always shuffle with a fixed seed so that the split is reproducible
@@ -71,31 +73,30 @@ def build_dataset(prebuilt=False):
     val_image_filenames = image_filenames[val_ind]
     train_image_filenames = image_filenames[train_ind]
 
-    print('We split dataset into {:d} training images, {:d} validation images
-          and {:d} testing imaegs'.format(len(train_image_filenames),
+    print('We split dataset into {:d} training images, '
+          '{:d} validation images and {:d} testing imaegs'.format(len(train_image_filenames),
                                           len(val_image_filenames), 
                                           len(test_image_filenames)))
 
 
     filenames = {'train_images': train_image_filenames,
                  'val_images': val_image_filenames,
-                 'test_images': test_filenames}
+                 'test_images': test_image_filenames}
 
 
-     # Preprocess train, val and test
-     for split in ['train', 'val', 'test']:
+    # Preprocess train, val and test
+    for split in ['train', 'val', 'test']:
         tf_records_filename = os.path.join(cfg.DATA_DIR, split+'.tfrecord')
         writer = tf.python_io.TFRecordWriter(tf_records_filename)
 
-        print("Processing {} images, saving preprocessed images to
-              {}".format(split, tf_records_filename))
+        print("Processing {} images, saving preprocessed images to {}".format(split, tf_records_filename))
         color_mode = 'grayscale' if cfg.CHANNELS==1 else 'rgb'
         for filename in tqdm(filenames[split+'_images']):
             # Can optionally resize
             # Also make the range from [0, 255] -> [0, 1.0]
-            img = img_to_array(load_img(filenames[i], color_mode=color_mode, 
+            img = img_to_array(load_img(filename, color_mode=color_mode, 
                                         target_size=None)) / 255.0
-            if split != test:
+            if split != 'test':
                 # load label
                 filename_suffix = filename.split('/')[-1]
                 label_path = os.path.join(labels_dir, filename_suffix)
@@ -116,7 +117,7 @@ def build_dataset(prebuilt=False):
                 ))
 
                 writer.write(example.SerializeToString())
-        write.close()
+        writer.close()
 
 
     print("Done building dataset")

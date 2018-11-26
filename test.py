@@ -5,11 +5,13 @@ import argparse
 import h5py
 from PIL import Image
 import os
+import pprint
+import numpy as np
 
 from lib.models.srcnn import Srcnn
 from lib.datasets import xray
 from lib.config import cfg, get_output_dir
-from build_dataset import build_dataset
+from lib.utils import build_dataset
 
 
 def parse_args():
@@ -19,7 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Train a Fast R-CNN network')
     parser.add_argument('--dataset', dest='dataset',
                         help='training dataset',
-                        default='xray_image', type=str)
+                        default='xray_images', type=str)
     parser.add_argument('--nw', dest='num_workers',
                         help='number of worker to load data',
                         default=4, type=int)
@@ -32,8 +34,8 @@ def parse_args():
     parser.add_argument('--channels', dest='channels',
                         help='Number of channels',
                         default=3, type=int)
-    parser.add_argument('--num_val', default=5000, type=int, help="Number of
-                        validation image")
+    parser.add_argument('--num_val', default=5000, type=int, 
+                        help="Number of validation image")
     parser.add_argument('--model', default='srcnn', type=str, 
                         help="Model name")
 
