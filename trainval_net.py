@@ -12,6 +12,7 @@ from lib.models.srcnn import Srcnn
 from lib.datasets import xray
 from lib.config import cfg, cfg_from_file
 from lib.utils import build_dataset
+from lib.models.LRMultiplierSGD import LRMultiplierSGD
 
 
 def parse_args():
@@ -51,6 +52,8 @@ def parse_args():
                         default=3, type=int)
     parser.add_argument('--num_val', default=5000, type=int, 
                         help="Number of validation image")
+    parser.add_argument('--model', default='srcnn', type=str, 
+                        help="Model name")
 
     # config optimization
     parser.add_argument('--o', dest='optimizer',
@@ -124,10 +127,18 @@ if __name__ == '__main__':
         model = Srcnn(cfg.INPUT_IMAGE_SIZE, cfg.OUTPUT_LABEL_SIZE,
                       cfg.CHANNELS)
         # The compile step specifies the training configuration.
-        model.compile(optimizer=tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
-                                                           cfg.TRAIN.MOMENTUM),
+        if args.model == 'srcnn':
+            optimizer = LRMultiplierSGD(lr=cfg.TRAIN.LEARNING_RATE,
+                                        momentum=cfg.TRAIN.MOMENTUM,
+                                        multipliers=[1, 1, 1, 1, 0.1, 0.1])
+        else:
+            optimizer = tf.train.MomemtumOptimizer(cfg.TRAIN.LEARNING_RATE,
+                                                   cfg.TRAIN.MOMENTUM)
+
+        model.compile(optimizer=optimizer,
                       loss=tf.losses.mean_squared_error, 
                       metrics=[rmse])
+
 
     train_dataset = xray.get_dataset('train')
     val_dataset = xray.get_dataset('val')

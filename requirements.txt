@@ -6,3 +6,4 @@ easydict
 h5py
 tqdm
 pyyaml
+keras

@@ -14,6 +14,7 @@ from lib.models.srcnn import Srcnn
 from lib.datasets import xray
 from lib.config import cfg, get_output_dir
 from lib.utils import build_dataset
+from lib.models.LRMultiplierSGD import LRMultiplierSGD
 
 
 def parse_args():
@@ -24,6 +25,9 @@ def parse_args():
     parser.add_argument('--dataset', dest='dataset',
                         help='training dataset',
                         default='xray_images', type=str)
+    parser.add_argument('--cfg_file', dest='cfg_file',
+                        help='path to cfg_file (.yaml)',
+                        default='', type=str)
     parser.add_argument('--nw', dest='num_workers',
                         help='number of worker to load data',
                         default=4, type=int)
@@ -49,12 +53,21 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+def rmse(y_true, y_pred):
+    # Slightly different here. I just use the mean of batch
+    # Not the sum over batch
+    return K.sqrt(K.mean(K.square(y_pred - y_true)))
+    # Below should match the form on the project page
+    #return K.sum(K.sqrt(K.mean(K.square(y_pred - y_true), axis=[1,2,3])))
+
 if __name__ == '__main__':
 
     args = parse_args()
 
     print('Called with args:')
     print(args)
+    if args.cfg_file:
+        cfg_from_file(args.cfg_file)
 
 
     cfg.TRAIN.BATCH_SIZE = args.batch_size
@@ -73,12 +86,26 @@ if __name__ == '__main__':
     print('Using config:')
     pprint.pprint(cfg)
 
-    print('Using config:')
-    pprint.pprint(cfg)
     np.random.seed(cfg.RNG_SEED)
 
 
-    model = load_model(args.checkpoint)
+    #model = load_model(args.checkpoint)
+    # Create model
+    model = Srcnn(cfg.INPUT_IMAGE_SIZE, cfg.OUTPUT_LABEL_SIZE,
+                  cfg.CHANNELS)
+    # The compile step specifies the training configuration.
+    if args.model == 'srcnn':
+        optimizer = LRMultiplierSGD(lr=cfg.TRAIN.LEARNING_RATE,
+                                    momentum=cfg.TRAIN.MOMENTUM,
+                                    multipliers=[1, 1, 1, 1, 0.1, 0.1])
+    else:
+        optimizer = tf.train.MomemtumOptimizer(cfg.TRAIN.LEARNING_RATE,
+                                               cfg.TRAIN.MOMENTUM)
+
+    model.compile(optimizer=optimizer,
+                  loss=tf.losses.mean_squared_error, 
+                  metrics=[rmse])
+    model.load_weights(args.checkpoint)
 
 
     test_dataset = xray.get_dataset('test')
