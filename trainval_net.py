@@ -10,7 +10,7 @@ import numpy as np
 
 from lib.models.srcnn import Srcnn
 from lib.datasets import xray
-from lib.config import cfg
+from lib.config import cfg, cfg_from_file
 from lib.utils import build_dataset
 
 
@@ -22,6 +22,9 @@ def parse_args():
     parser.add_argument('--dataset', dest='dataset',
                         help='training dataset',
                         default='xray_images', type=str)
+    parser.add_argument('--cfg_file', dest='cfg_file',
+                        help='path to cfg_file (.yaml)',
+                        default='', type=str)
     parser.add_argument('--start_epoch', dest='start_epoch',
                         help='starting epoch',
                         default=1, type=int)
@@ -41,7 +44,7 @@ def parse_args():
                         help='batch_size',
                         default=128, type=int)
     parser.add_argument('--prebuilt', dest='prebuilt',
-                        help='Whether to build dataset to tf record',
+                        help='Whether dataset is converted to tf records already',
                         default=False, type=bool)
     parser.add_argument('--channels', dest='channels',
                         help='Number of channels',
@@ -85,6 +88,8 @@ if __name__ == '__main__':
     print('Called with args:')
     print(args)
 
+    if args.cfg_file:
+        cfg_from_file(args.cfg_file)
 
     cfg.TRAIN.LEARNING_RATE = args.lr
     cfg.TRAIN.BATCH_SIZE = args.batch_size
@@ -95,6 +100,7 @@ if __name__ == '__main__':
     assert os.path.isdir(cfg.DATA_DIR), "Couldn't find the dataset at {}".format(cfg.DATA_DIR)
     cfg.NUM_VAL = args.num_val
     cfg.CHANNELS = args.channels
+
 
     # Build dataset
     # If args.prebuilt == True, it will just return the number of samples in

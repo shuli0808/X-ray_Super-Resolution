@@ -1,19 +1,38 @@
 # Xray image enhancement
 
-## Requirements
-I using python3. Install the dependencies as follows
+## Preparation
+First of all, clone the code
+```
+git clone https://github.com/shuli0808/X-ray_Super-Resolution.git
+```
+Then, create a folder:
+```
+cd X-ray_Super-Resolution && mkdir data
+```
+
+### prerequisites
+Install all the python dependencies using pip:
 ```
 pip install -r requirements.txt
 ```
 
-## Download the xray dataset
-Run the script `train.py` to start training. Look at the options in the training file:
+### data Preparation
+Download the dataset and move it into `data/`
+
+## Train
+Look at the options in `train.py`:
 ```bash
 python train.py
 ```
 
+## Test
+Look at the options in `test.py`:
+```bash
+python test.py
+```
+
 ## Note
-Right now it would contain bugs since I have not test it yet
+Right now need to fix the size for the image, determine input, output size
 
 
 
