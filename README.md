@@ -11,24 +11,24 @@ cd X-ray_Super-Resolution && mkdir data
 ```
 
 ### prerequisites
-Install all the python dependencies using pip:
+* Install all the python dependencies using pip:
 ```
 pip install -r requirements.txt
 ```
 
 ### data Preparation
-Download the dataset and move it into `data/`
+* Download the dataset and move it into `data/`
 
 ## Train
-Look at the options in `train.py`:
+Look at the options in `trainval_net.py`:
 ```bash
-python train.py
+python trainval_net.py
 ```
 
 ## Test
-Look at the options in `test.py`:
+Look at the options in `test_net.py`:
 ```bash
-python test.py
+python test_net.py
 ```
 
 ## Note
