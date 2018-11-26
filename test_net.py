@@ -1,6 +1,8 @@
 import tensorflow as tf
 import tensorflow.keras.backend as K
 from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import array_to_img as array_to_img
+from tensorflow.keras.preprocessing.image import save_img as save_img
 import argparse
 import h5py
 from PIL import Image
@@ -83,10 +85,7 @@ if __name__ == '__main__':
     # Testing
     result = model.predict(test_dataset)
 
-    # Rescale to range [0, 255.0]
-    result = result * 255.0 
-
-    print(result.shape)
+    #print(result.shape)
     assert result.shape == (count_dict['test_count'], cfg.OUTPUT_LABEL_SIZE,
                             cfg.OUTPUT_LABEL_SIZE, cfg.CHANNELS), \
             'result has shape {} != {}'.format(result.shape, (count_dict['test_count'],
@@ -94,9 +93,13 @@ if __name__ == '__main__':
                            cfg.CHANNELS))
 
     output_dir = get_output_dir(args.model)
+    test_images_dir = os.path.join(cfg.DATA_DIR, 'test_images_64x64')
+    test_image_filenames = np.array([os.path.join(test_images_dir, f) for f in 
+                                     filenames if f.endswith('.png')])
     for i in range(result.shape[0]):
-        im = Image.fromarray(result[i])
-        # Need to change later to match the filename from test?
-        im.save(os.path.join(output_dir, str(i)+'.png'))
+        filename_suffix = test_image_filenames[i].split('/')[-1]
+        # This will rescale image values to be within [0, 255]
+        save_img(os.path.join(output_dir, filename_suffix), result[i], 
+                 data_format='channels_last', scale=True)
 
 
