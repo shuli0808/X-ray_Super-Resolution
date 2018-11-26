@@ -92,7 +92,7 @@ if __name__ == '__main__':
     #model = load_model(args.checkpoint)
     # Create model
     model = Srcnn(cfg.INPUT_IMAGE_SIZE, cfg.OUTPUT_LABEL_SIZE,
-                  cfg.CHANNELS)
+                  cfg.CHANNELS, False)
     # The compile step specifies the training configuration.
     if args.model == 'srcnn':
         optimizer = LRMultiplierSGD(lr=cfg.TRAIN.LEARNING_RATE,
