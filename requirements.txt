@@ -4,3 +4,5 @@ tensorflow>=1.5
 tqdm
 easydict
 h5py
+tqdm
+pyyaml
