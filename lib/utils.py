@@ -95,7 +95,8 @@ def build_dataset(prebuilt=False):
             # Can optionally resize
             # Also make the range from [0, 255] -> [0, 1.0]
             img = img_to_array(load_img(filename, color_mode=color_mode, 
-                                        target_size=None)) / 255.0
+                                        target_size=(128,128),
+                                        interpolation= 'bicubic')) / 255.0
             if split != 'test':
                 # load label
                 filename_suffix = filename.split('/')[-1]
@@ -103,6 +104,14 @@ def build_dataset(prebuilt=False):
                 label = img_to_array(load_img(label_path, color_mode=color_mode,
                                               target_size=None)) / 255.0
                 # Maybe implement crop to patches here
+                num_pix = 4
+                #number of pixel of each block after cropping
+
+                sub_img = img.reshape(128/num_pix^2,num_pix,num_pix,3)
+                #Array that containes the block pixels
+                sub_label = label.reshape(128/num_pix^2,num_pix,num_pix,3)
+                
+
                 # crop_and_save(imaeg, output_dir_split, label, size=64)
                 # Below two lines should also be in the crop_and_save function
                 example = tf.train.Example(features=tf.train.Features(
