@@ -28,7 +28,7 @@ def parse_args():
                         default='', type=str)
     parser.add_argument('--start_epoch', dest='start_epoch',
                         help='starting epoch',
-                        default=1, type=int)
+                        default=0, type=int)
     parser.add_argument('--epochs', dest='max_epochs',
                         help='number of epochs to train',
                         default=100, type=int)
@@ -109,6 +109,7 @@ if __name__ == '__main__':
     # If args.prebuilt == True, it will just return the number of samples in
     # 'train', 'val', and 'test'
     count_dict = build_dataset(args.prebuilt)
+    print(count_dict)
 
     print('Using config:')
     pprint.pprint(cfg)
@@ -118,26 +119,24 @@ if __name__ == '__main__':
     np.random.seed(cfg.RNG_SEED)
 
 
-    if args.resume:
-        model = load_model(args.checkpoint)
-        args.start_epoch = int(args.checkpoint.split('/')[-1].split['-'][1][-3:])
-
+    # Create model
+    model = Srcnn(cfg.INPUT_IMAGE_SIZE, cfg.OUTPUT_LABEL_SIZE,
+                  cfg.CHANNELS)
+    # The compile step specifies the training configuration.
+    if args.model == 'srcnn':
+        optimizer = LRMultiplierSGD(lr=cfg.TRAIN.LEARNING_RATE,
+                                    momentum=cfg.TRAIN.MOMENTUM,
+                                    multipliers=[1, 1, 1, 1, 0.1, 0.1])
     else:
-        # Create model
-        model = Srcnn(cfg.INPUT_IMAGE_SIZE, cfg.OUTPUT_LABEL_SIZE,
-                      cfg.CHANNELS)
-        # The compile step specifies the training configuration.
-        if args.model == 'srcnn':
-            optimizer = LRMultiplierSGD(lr=cfg.TRAIN.LEARNING_RATE,
-                                        momentum=cfg.TRAIN.MOMENTUM,
-                                        multipliers=[1, 1, 1, 1, 0.1, 0.1])
-        else:
-            optimizer = tf.train.MomemtumOptimizer(cfg.TRAIN.LEARNING_RATE,
-                                                   cfg.TRAIN.MOMENTUM)
+        optimizer = tf.train.MomemtumOptimizer(cfg.TRAIN.LEARNING_RATE,
+                                               cfg.TRAIN.MOMENTUM)
+    if args.resume:
+        args.start_epoch = int(args.checkpoint.split('/')[-1].split['-'][1][-3:])
+        model.load_weights(args.checkpoint)
 
-        model.compile(optimizer=optimizer,
-                      loss=tf.losses.mean_squared_error, 
-                      metrics=[rmse])
+    model.compile(optimizer=optimizer,
+                  loss=tf.losses.mean_squared_error, 
+                  metrics=[rmse])
 
 
     train_dataset = xray.get_dataset('train')
@@ -151,7 +150,8 @@ if __name__ == '__main__':
                           min_delta=1e-3),
         TensorBoard(log_dir='./logs'),
         ModelCheckpoint(save_filepath, monitor='rmse', period=1,
-                        save_best_only=True, mode='min', verbose=1)
+                        save_best_only=True, mode='min', verbose=1,
+                        save_weights_only=True)
     ]
     # Training
     model.fit(train_dataset, initial_epoch=args.start_epoch, epochs=args.max_epochs,

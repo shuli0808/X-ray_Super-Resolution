@@ -48,9 +48,14 @@ __C.DATA_DIR = osp.abspath(osp.join(__C.ROOT_DIR, 'data'))
 __C.EXP_DIR = 'default'
 
 # GrayImage or RGB
-__C.CHANNELS = 3
-__C.INPUT_IMAGE_SIZE = 33
-__C.OUTPUT_LABEL_SIZE = 21
+__C.CHANNELS = 1
+__C.INPUT_IMAGE_SIZE = 32
+__C.OUTPUT_LABEL_SIZE = 20
+__C.OUTPUT_START_INDEX = 6
+
+# Crop and resize
+#number of pixel of each block after cropping
+__C.ORIGIN_OUTPUT_LABEL_SIZE = 128
 
 
 def get_output_tb_dir(dataset_name, weights_filename):

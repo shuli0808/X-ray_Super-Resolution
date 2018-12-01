@@ -95,7 +95,8 @@ def build_dataset(prebuilt=False):
             # Can optionally resize
             # Also make the range from [0, 255] -> [0, 1.0]
             img = img_to_array(load_img(filename, color_mode=color_mode, 
-                                        target_size=(128,128),
+                                        target_size=(cfg.ORIGIN_OUTPUT_LABEL_SIZE,
+                                                    cfg.ORIGIN_OUTPUT_LABEL_SIZE),
                                         interpolation= 'bicubic')) / 255.0
             if split != 'test':
                 # load label
@@ -104,22 +105,23 @@ def build_dataset(prebuilt=False):
                 label = img_to_array(load_img(label_path, color_mode=color_mode,
                                               target_size=None)) / 255.0
                 # Maybe implement crop to patches here
-                num_pix = 4
-                #number of pixel of each block after cropping
-
-                sub_img = img.reshape(128/num_pix^2,num_pix,num_pix,3)
+                crop_per_im = int((cfg.ORIGIN_OUTPUT_LABEL_SIZE / cfg.INPUT_IMAGE_SIZE) ** 2)
+                sub_img = img.reshape(crop_per_im, cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE, cfg.CHANNELS)
                 #Array that containes the block pixels
-                sub_label = label.reshape(128/num_pix^2,num_pix,num_pix,3)
-                
+                sub_label = label.reshape(crop_per_im, cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE, cfg.CHANNELS)
+                output_end_index = cfg.OUTPUT_START_INDEX + cfg.OUTPUT_LABEL_SIZE
+                sub_label = sub_label[:, cfg.OUTPUT_START_INDEX:output_end_index,
+                                      cfg.OUTPUT_START_INDEX:output_end_index, :]
 
-                # crop_and_save(imaeg, output_dir_split, label, size=64)
-                # Below two lines should also be in the crop_and_save function
-                example = tf.train.Example(features=tf.train.Features(
-                    feature={'image': _bytes_feature(img.tostring()),
-                             'label': _bytes_feature(label.tostring())}
-                ))
+                for b in range(crop_per_im):
+                    # crop_and_save(imaeg, output_dir_split, label, size=64)
+                    # Below two lines should also be in the crop_and_save function
+                    example = tf.train.Example(features=tf.train.Features(
+                        feature={'image': _bytes_feature(sub_img[b].tostring()),
+                                 'label': _bytes_feature(sub_label[b].tostring())}
+                    ))
 
-                writer.write(example.SerializeToString())
+                    writer.write(example.SerializeToString())
             else:
                 example = tf.train.Example(features=tf.train.Features(
                     feature={'image': _bytes_feature(img.tostring())}
@@ -130,8 +132,8 @@ def build_dataset(prebuilt=False):
 
 
     print("Done building dataset")
-    return {'train_count': len(train_image_filenames), 
-            'val_count': len(val_image_filenames), 
+    return {'train_count': len(train_image_filenames) * crop_per_im, 
+            'val_count': len(val_image_filenames) * crop_per_im, 
             'test_count': len(test_image_filenames)}
 
 
