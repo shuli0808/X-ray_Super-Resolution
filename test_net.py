@@ -121,10 +121,11 @@ if __name__ == '__main__':
                            verbose=1)
 
     #print(result.shape)
-    assert result.shape == (count_dict['test_count'], cfg.OUTPUT_LABEL_SIZE,
-                            cfg.OUTPUT_LABEL_SIZE, cfg.CHANNELS), \
+    assert result.shape == (count_dict['test_count'],
+                            cfg.ORIGIN_OUTPUT_LABEL_SIZE,
+                            cfg.ORIGIN_OUTPUT_LABEL_SIZE, cfg.CHANNELS), \
             'result has shape {} != {}'.format(result.shape, (count_dict['test_count'],
-                           cfg.OUTPUT_LABEL_SIZE, cfg.OUTPUT_LABEL_SIZE,
+                           cfg.ORIGIN_OUTPUT_LABEL_SIZE, cfg.ORIGIN_OUTPUT_LABEL_SIZE,
                            cfg.CHANNELS))
 
     output_dir = get_output_dir(args.model)
