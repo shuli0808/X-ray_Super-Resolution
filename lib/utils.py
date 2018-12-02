@@ -113,7 +113,7 @@ def build_dataset(prebuilt=False):
                 sub_img = img.reshape(crop_per_im, cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE, cfg.CHANNELS)
                 #Array that containes the block pixels
                 sub_label = label.reshape(crop_per_im, cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE, cfg.CHANNELS)
-                output_start_index = (cfg.INPUT_IMAGE_SIZE - cfg.OUTPUT_LABEL_SIZE) / 2
+                output_start_index = int((cfg.INPUT_IMAGE_SIZE - cfg.OUTPUT_LABEL_SIZE) / 2)
                 output_end_index = output_start_index + cfg.OUTPUT_LABEL_SIZE
                 sub_label = sub_label[:, output_start_index:output_end_index,
                                       output_start_index:output_end_index, :]
