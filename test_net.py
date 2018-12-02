@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+ 
 import tensorflow as tf
 import tensorflow.keras.backend as K
 from tensorflow.keras.models import load_model
@@ -9,6 +13,7 @@ from PIL import Image
 import os
 import pprint
 import numpy as np
+from tqdm import tqdm
 
 from lib.models.srcnn import Srcnn
 from lib.datasets import xray
@@ -99,18 +104,21 @@ if __name__ == '__main__':
                                     momentum=cfg.TRAIN.MOMENTUM,
                                     multipliers=[1, 1, 1, 1, 0.1, 0.1])
     else:
-        optimizer = tf.train.MomemtumOptimizer(cfg.TRAIN.LEARNING_RATE,
+        optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
                                                cfg.TRAIN.MOMENTUM)
 
+    model.load_weights(args.checkpoint)
     model.compile(optimizer=optimizer,
                   loss=tf.losses.mean_squared_error, 
                   metrics=[rmse])
-    model.load_weights(args.checkpoint)
 
 
     test_dataset = xray.get_dataset('test')
     # Testing
-    result = model.predict(test_dataset)
+    result = model.predict(test_dataset, 
+                           steps=int(count_dict['test_count'] /
+                                     cfg.TEST.BATCH_SIZE),
+                           verbose=1)
 
     #print(result.shape)
     assert result.shape == (count_dict['test_count'], cfg.OUTPUT_LABEL_SIZE,
@@ -123,7 +131,7 @@ if __name__ == '__main__':
     test_images_dir = os.path.join(cfg.DATA_DIR, 'test_images_64x64')
     test_image_filenames = np.array([os.path.join(test_images_dir, f) for f in 
                                      filenames if f.endswith('.png')])
-    for i in range(result.shape[0]):
+    for i in tqdm(range(result.shape[0])):
         filename_suffix = test_image_filenames[i].split('/')[-1]
         # This will rescale image values to be within [0, 255]
         save_img(os.path.join(output_dir, filename_suffix), result[i], 

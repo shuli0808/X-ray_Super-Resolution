@@ -129,7 +129,8 @@ def build_dataset(prebuilt=False):
                     writer.write(example.SerializeToString())
             else:
                 example = tf.train.Example(features=tf.train.Features(
-                    feature={'image': _bytes_feature(img.tostring())}
+                    feature={'image': _bytes_feature(img.tostring()),
+                             'label': _bytes_feature(img.tostring())}
                 ))
 
                 writer.write(example.SerializeToString())

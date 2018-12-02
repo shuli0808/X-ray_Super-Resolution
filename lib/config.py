@@ -36,6 +36,9 @@ __C.TRAIN.NUM_WORKERS = 4
 #__C.NUM_VAL = 5000 
 #__C.NUM_TRAIN = 10000 
 #__C.NUM_TEST = 5000 
+__C.TEST = edict()
+# Minibatch size 
+__C.TEST.BATCH_SIZE = 43
 
 
 # For reproducibility

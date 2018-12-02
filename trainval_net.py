@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+ 
 import tensorflow as tf
 import tensorflow.keras.backend as K
 from tensorflow.keras.callbacks import ReduceLROnPlateau, TensorBoard, ModelCheckpoint
@@ -128,7 +132,7 @@ if __name__ == '__main__':
                                     momentum=cfg.TRAIN.MOMENTUM,
                                     multipliers=[1, 1, 1, 1, 0.1, 0.1])
     else:
-        optimizer = tf.train.MomemtumOptimizer(cfg.TRAIN.LEARNING_RATE,
+        optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
                                                cfg.TRAIN.MOMENTUM)
     if args.resume:
         args.start_epoch = int(args.checkpoint.split('/')[-1].split['-'][1][-3:])

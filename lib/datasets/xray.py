@@ -9,20 +9,28 @@ featdef = {
     'label': tf.FixedLenFeature(shape=[], dtype=tf.string),
 }
 
-
 def _parse_record(example_proto, is_test=False):
     """Parse a single record into image, and labels (channel_last)"""
     example = tf.parse_single_example(example_proto, featdef)
-    im = tf.decode_raw(example['image'], tf.float32)
-    im = tf.reshape(im, (cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE,
-                         cfg.CHANNELS))
     if not is_test:
+        im = tf.decode_raw(example['image'], tf.float32)
+        im = tf.reshape(im, (cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE,
+                             cfg.CHANNELS))
         label = tf.decode_raw(example['label'], tf.float32)
         label = tf.reshape(label, (cfg.OUTPUT_LABEL_SIZE, cfg.OUTPUT_LABEL_SIZE,
                                 cfg.CHANNELS))
         return im, label
     else:
-        return im
+        im = tf.decode_raw(example['image'], tf.float32)
+        im = tf.reshape(im, (cfg.ORIGIN_OUTPUT_LABEL_SIZE,
+                             cfg.ORIGIN_OUTPUT_LABEL_SIZE,
+                             cfg.CHANNELS))
+        # Need this to work for predict
+        dummy = tf.decode_raw(example['label'], tf.float32)
+        dummy = tf.reshape(dummy, (cfg.ORIGIN_OUTPUT_LABEL_SIZE,
+                                   cfg.ORIGIN_OUTPUT_LABEL_SIZE,
+                                   cfg.CHANNELS))
+        return im, dummy
 
 
 
@@ -58,7 +66,7 @@ def get_dataset(mode):
         dataset = (tf.data.TFRecordDataset(os.path.join(cfg.DATA_DIR,
                                                         mode+'.tfrecord'))
             .map(lambda e: _parse_record(e, True))
-            .batch(cfg.TRAIN.BATCH_SIZE)
+            .batch(cfg.TEST.BATCH_SIZE)
             .prefetch(1)  # make sure you always have one batch ready to serve
         )
     else:
