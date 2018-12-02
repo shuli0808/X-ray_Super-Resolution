@@ -15,6 +15,10 @@ We already have a test set created, so we only need to split
 We'll take args.num_val (5000) of "train_images_xxx" as val set.
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 import sys
 import numpy as np
@@ -109,9 +113,10 @@ def build_dataset(prebuilt=False):
                 sub_img = img.reshape(crop_per_im, cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE, cfg.CHANNELS)
                 #Array that containes the block pixels
                 sub_label = label.reshape(crop_per_im, cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE, cfg.CHANNELS)
-                output_end_index = cfg.OUTPUT_START_INDEX + cfg.OUTPUT_LABEL_SIZE
-                sub_label = sub_label[:, cfg.OUTPUT_START_INDEX:output_end_index,
-                                      cfg.OUTPUT_START_INDEX:output_end_index, :]
+                output_start_index = (cfg.INPUT_IMAGE_SIZE - cfg.OUTPUT_LABEL_SIZE) / 2
+                output_end_index = output_start_index + cfg.OUTPUT_LABEL_SIZE
+                sub_label = sub_label[:, output_start_index:output_end_index,
+                                      output_start_index:output_end_index, :]
 
                 for b in range(crop_per_im):
                     # crop_and_save(imaeg, output_dir_split, label, size=64)

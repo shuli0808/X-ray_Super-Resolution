@@ -51,7 +51,7 @@ __C.EXP_DIR = 'default'
 __C.CHANNELS = 1
 __C.INPUT_IMAGE_SIZE = 32
 __C.OUTPUT_LABEL_SIZE = 20
-__C.OUTPUT_START_INDEX = 6
+#__C.OUTPUT_START_INDEX = 6
 
 # Crop and resize
 #number of pixel of each block after cropping
