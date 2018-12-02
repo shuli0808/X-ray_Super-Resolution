@@ -82,11 +82,10 @@ def get_output_dir(dataset_name, weights_filename=None):
     A canonical path is built using the name from an imdb and a network
     (if not None).
     """
-    outdir = osp.abspath(osp.join(__C.ROOT_DIR, 'output', __C.EXP_DIR,
-                                  dataset_name))
-    if weights_filename is None:
-        weights_filename = 'default'
-    outdir = osp.join(outdir, weights_filename)
+    outdir = osp.abspath(osp.join(__C.ROOT_DIR, 'output', dataset_name))
+    #if weights_filename is None:
+        #weights_filename = 'default'
+    #outdir = osp.join(outdir, weights_filename)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     return outdir
