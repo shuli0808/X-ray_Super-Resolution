@@ -130,6 +130,7 @@ if __name__ == '__main__':
 
     output_dir = get_output_dir(args.model)
     test_images_dir = os.path.join(cfg.DATA_DIR, 'test_images_64x64')
+    filenames = os.listdir(test_images_dir)
     test_image_filenames = np.array([os.path.join(test_images_dir, f) for f in 
                                      filenames if f.endswith('.png')])
     for i in tqdm(range(result.shape[0])):
