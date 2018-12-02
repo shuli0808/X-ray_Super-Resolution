@@ -76,7 +76,7 @@ def get_output_tb_dir(dataset_name, weights_filename):
         os.makedirs(outdir)
     return outdir
 
-def get_output_dir(dataset_name, weights_filename):
+def get_output_dir(dataset_name, weights_filename=None):
     """Return the directory where experimental artifacts are placed.
     If the directory does not exist, it is created.
     A canonical path is built using the name from an imdb and a network
