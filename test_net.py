@@ -38,14 +38,14 @@ def parse_args():
                         default=4, type=int)
     parser.add_argument('--bs', dest='batch_size',
                         help='batch_size',
-                        default=128, type=int)
+                        default=129, type=int)
     parser.add_argument('--prebuilt', dest='prebuilt',
                         help='Whether prebuilt dataset to tf record',
                         default=True, type=bool)
     parser.add_argument('--channels', dest='channels',
                         help='Number of channels',
-                        default=3, type=int)
-    parser.add_argument('--num_val', default=5000, type=int, 
+                        default=1, type=int)
+    parser.add_argument('--num_val', default=4000, type=int, 
                         help="Number of validation image")
     parser.add_argument('--model', default='srcnn', type=str, 
                         help="Model name")
@@ -61,9 +61,9 @@ def parse_args():
 def rmse(y_true, y_pred):
     # Slightly different here. I just use the mean of batch
     # Not the sum over batch
-    return K.sqrt(K.mean(K.square(y_pred - y_true)))
+    #return K.sqrt(K.mean(K.square(y_pred - y_true)))
     # Below should match the form on the project page
-    #return K.sum(K.sqrt(K.mean(K.square(y_pred - y_true), axis=[1,2,3])))
+    return K.sum(K.sqrt(K.mean(K.square(y_pred - y_true), axis=[1,2,3])))
 
 if __name__ == '__main__':
 
@@ -75,7 +75,7 @@ if __name__ == '__main__':
         cfg_from_file(args.cfg_file)
 
 
-    cfg.TRAIN.BATCH_SIZE = args.batch_size
+    cfg.TEST.BATCH_SIZE = args.batch_size
     cfg.TRAIN.NUM_WORKERS = args.num_workers
 
     cfg.DATA_DIR = os.path.join(cfg.DATA_DIR, args.dataset)
@@ -116,8 +116,7 @@ if __name__ == '__main__':
     test_dataset = xray.get_dataset('test')
     # Testing
     result = model.predict(test_dataset, 
-                           steps=int(count_dict['test_count'] /
-                                     cfg.TEST.BATCH_SIZE),
+                           steps=int(count_dict['test_count'] / cfg.TEST.BATCH_SIZE),
                            verbose=1)
 
     #print(result.shape)

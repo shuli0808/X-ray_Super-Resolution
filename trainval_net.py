@@ -35,7 +35,7 @@ def parse_args():
                         default=0, type=int)
     parser.add_argument('--epochs', dest='max_epochs',
                         help='number of epochs to train',
-                        default=100, type=int)
+                        default=50, type=int)
     parser.add_argument('--disp_interval', dest='disp_interval',
                         help='number of iterations to display',
                         default=100, type=int)
@@ -53,8 +53,8 @@ def parse_args():
                         default=False, type=bool)
     parser.add_argument('--channels', dest='channels',
                         help='Number of channels',
-                        default=3, type=int)
-    parser.add_argument('--num_val', default=5000, type=int, 
+                        default=1, type=int)
+    parser.add_argument('--num_val', default=4000, type=int, 
                         help="Number of validation image")
     parser.add_argument('--model', default='srcnn', type=str, 
                         help="Model name")
@@ -65,7 +65,7 @@ def parse_args():
                         default="sgd", type=str)
     parser.add_argument('--lr', dest='lr',
                         help='starting learning rate',
-                        default=0.001, type=float)
+                        default=0.0001, type=float)
     parser.add_argument('--lr_decay_gamma', dest='lr_decay_gamma',
                         help='learning rate decay ratio',
                         default=0.1, type=float)
@@ -84,9 +84,9 @@ def parse_args():
 def rmse(y_true, y_pred):
     # Slightly different here. I just use the mean of batch
     # Not the sum over batch
-    return K.sqrt(K.mean(K.square(y_pred - y_true)))
+    #return K.sqrt(K.mean(K.square(y_pred - y_true)))
     # Below should match the form on the project page
-    #return K.sum(K.sqrt(K.mean(K.square(y_pred - y_true), axis=[1,2,3])))
+    return K.sum(K.sqrt(K.mean(K.square(y_pred - y_true), axis=[1,2,3])))
 
 if __name__ == '__main__':
 
@@ -118,8 +118,6 @@ if __name__ == '__main__':
     print('Using config:')
     pprint.pprint(cfg)
 
-    print('Using config:')
-    pprint.pprint(cfg)
     np.random.seed(cfg.RNG_SEED)
 
 
