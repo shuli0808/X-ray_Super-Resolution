@@ -47,7 +47,7 @@ def parse_args():
                         default=4, type=int)
     parser.add_argument('--bs', dest='batch_size',
                         help='batch_size',
-                        default=128, type=int)
+                        default=64, type=int)
     parser.add_argument('--prebuilt', dest='prebuilt',
                         help='Whether dataset is converted to tf records already',
                         default=False, type=bool)
@@ -69,6 +69,9 @@ def parse_args():
     parser.add_argument('--lr_decay_gamma', dest='lr_decay_gamma',
                         help='learning rate decay ratio',
                         default=0.1, type=float)
+    parser.add_argument('--session', dest='session',
+                        help='Current session. Useful for multiple times training',
+                        default=1, type=int)
 
     # resume trained model
     parser.add_argument('--r', dest='resume',
@@ -145,7 +148,7 @@ if __name__ == '__main__':
     val_dataset = xray.get_dataset('val')
     # Callback
     save_filepath = os.path.join(args.save_dir,
-                                 "weights-{epoch:03d}-{rmse:.2f}.hdf5")
+                                 str(args.session)+"_weights-{epoch:03d}-{rmse:.2f}.h5")
     callbacks = [
         ReduceLROnPlateau(monitor='rmse', factor=cfg.TRAIN.GAMMA,
                           patience=3, mode='min', cooldown=1, 
