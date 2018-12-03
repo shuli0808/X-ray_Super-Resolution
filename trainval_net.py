@@ -147,8 +147,10 @@ if __name__ == '__main__':
     train_dataset = xray.get_dataset('train')
     val_dataset = xray.get_dataset('val')
     # Callback
+    if not os.path.exists(args.save_dir):
+        os.makedirs(args.save_dir)
     save_filepath = os.path.join(args.save_dir,
-                                 str(args.session)+"_weights-{epoch:03d}-{rmse:.2f}.h5")
+                                 str(args.session)+"_weights-{epoch:03d}-{val_rmse:.2f}.h5")
     callbacks = [
         ReduceLROnPlateau(monitor='val_rmse', factor=cfg.TRAIN.GAMMA,
                           patience=3, mode='min', cooldown=1, 
