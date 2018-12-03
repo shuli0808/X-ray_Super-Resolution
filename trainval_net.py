@@ -150,11 +150,11 @@ if __name__ == '__main__':
     save_filepath = os.path.join(args.save_dir,
                                  str(args.session)+"_weights-{epoch:03d}-{rmse:.2f}.h5")
     callbacks = [
-        ReduceLROnPlateau(monitor='rmse', factor=cfg.TRAIN.GAMMA,
+        ReduceLROnPlateau(monitor='val_rmse', factor=cfg.TRAIN.GAMMA,
                           patience=3, mode='min', cooldown=1, 
                           min_delta=1e-3),
         TensorBoard(log_dir='./logs'),
-        ModelCheckpoint(save_filepath, monitor='rmse', period=1,
+        ModelCheckpoint(save_filepath, monitor='val_rmse', period=1,
                         save_best_only=True, mode='min', verbose=1,
                         save_weights_only=True)
     ]
