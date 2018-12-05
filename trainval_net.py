@@ -35,7 +35,7 @@ def parse_args():
                         default=0, type=int)
     parser.add_argument('--epochs', dest='max_epochs',
                         help='number of epochs to train',
-                        default=50, type=int)
+                        default=200, type=int)
     parser.add_argument('--disp_interval', dest='disp_interval',
                         help='number of iterations to display',
                         default=100, type=int)
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
                                                cfg.TRAIN.MOMENTUM)
     if args.resume:
-        args.start_epoch = int(args.checkpoint.split('/')[-1].split['-'][1][-3:])
+        args.start_epoch = int(args.checkpoint.split('/')[-1].split('-')[-2][-3:])
         model.load_weights(args.checkpoint)
 
     model.compile(optimizer=optimizer,
@@ -147,8 +147,10 @@ if __name__ == '__main__':
     train_dataset = xray.get_dataset('train')
     val_dataset = xray.get_dataset('val')
     # Callback
+    if not os.path.exists(args.save_dir):
+        os.makedirs(args.save_dir)
     save_filepath = os.path.join(args.save_dir,
-                                 str(args.session)+"_weights-{epoch:03d}-{rmse:.2f}.h5")
+                                 str(args.session)+"-weights-{epoch:03d}-{val_rmse:.2f}.ckpt")
     callbacks = [
         ReduceLROnPlateau(monitor='val_rmse', factor=cfg.TRAIN.GAMMA,
                           patience=3, mode='min', cooldown=1, 
