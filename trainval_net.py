@@ -17,7 +17,7 @@ from lib.datasets import xray
 from lib.config import cfg, cfg_from_file
 from lib.utils import build_dataset
 from lib.models.LRMultiplierSGD import LRMultiplierSGD
-from lib.models.ReduceOnPlateau import ReduceLROnPlateau
+#from lib.models.ReduceOnPlateau import ReduceOnPlateau
 
 
 def parse_args():
@@ -134,8 +134,9 @@ if __name__ == '__main__':
                                     #momentum=cfg.TRAIN.MOMENTUM,
                                     #multipliers=[1, 1, 1, 1, 0.1, 0.1])
     #else:
-    optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
-                                               cfg.TRAIN.MOMENTUM)
+    #optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
+                                               #cfg.TRAIN.MOMENTUM)
+    optimizer = tf.train.AdamOptimizer(cfg.TRAIN.LEARNING_RATE)
     if args.resume:
         args.start_epoch = int(args.checkpoint.split('/')[-1].split('-')[-2][-3:])
         model.load_weights(args.checkpoint)
@@ -153,9 +154,9 @@ if __name__ == '__main__':
     save_filepath = os.path.join(args.save_dir,
                                  str(args.session)+"-weights-{epoch:03d}-{val_rmse:.2f}.ckpt")
     callbacks = [
-        ReduceOnPlateau(monitor='val_rmse', factor=cfg.TRAIN.GAMMA,
-                        patience=3, mode='min', cooldown=1, 
-                        min_delta=1e-3),
+        #ReduceOnPlateau(monitor='val_rmse', factor=cfg.TRAIN.GAMMA,
+                        #patience=3, mode='min', cooldown=1, 
+                        #min_delta=1e-3),
         TensorBoard(log_dir='./logs'),
         ModelCheckpoint(save_filepath, monitor='val_rmse', period=1,
                         save_best_only=True, mode='min', verbose=1,

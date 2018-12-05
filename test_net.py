@@ -104,8 +104,9 @@ if __name__ == '__main__':
                                     #momentum=cfg.TRAIN.MOMENTUM,
                                     #multipliers=[1, 1, 1, 1, 0.1, 0.1])
     #else:
-    optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
-                                           cfg.TRAIN.MOMENTUM)
+    #optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
+                                           #cfg.TRAIN.MOMENTUM)
+    optimizer = tf.train.AdamOptimizer(cfg.TRAIN.LEARNING_RATE)
 
     model.load_weights(args.checkpoint)
     model.compile(optimizer=optimizer,

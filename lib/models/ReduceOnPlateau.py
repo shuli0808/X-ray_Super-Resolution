@@ -1,5 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.callbacks import Callback
+import numpy as np
+import tensorflow.keras.backend as K
 
 class ReduceOnPlateau(Callback):
   """Reduce learning rate when a metric has stopped improving.
@@ -88,7 +90,7 @@ class ReduceOnPlateau(Callback):
 
   def on_epoch_end(self, epoch, logs=None):
     logs = logs or {}
-    logs['lr'] = K.get_value(self.model.optimizer._learning_rate)
+    logs['lr'] = K.get_value(self.model.optimizer.optimizer._learning_rate)
     current = logs.get(self.monitor)
     if current is None:
       logging.warning('Reduce LR on plateau conditioned on metric `%s` '
@@ -106,11 +108,11 @@ class ReduceOnPlateau(Callback):
       elif not self.in_cooldown():
         self.wait += 1
         if self.wait >= self.patience:
-          old_lr = float(K.get_value(self.model.optimizer._learning_rate))
+          old_lr = float(K.get_value(self.model.optimizer.optimizer._learning_rate))
           if old_lr > self.min_lr:
             new_lr = old_lr * self.factor
             new_lr = max(new_lr, self.min_lr)
-            K.set_value(self.model.optimizer._learning_rate, new_lr)
+            K.set_value(self.model.optimizer.optimizer._learning_rate, new_lr)
             if self.verbose > 0:
               print('\nEpoch %05d: ReduceLROnPlateau reducing learning '
                     'rate to %s.' % (epoch + 1, new_lr))
