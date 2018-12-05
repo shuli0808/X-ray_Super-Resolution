@@ -128,11 +128,11 @@ def build_dataset(prebuilt=False):
                     ))
 
                     writer.write(example.SerializeToString())
-                '''
                 output_start_index = int((cfg.INPUT_IMAGE_SIZE - cfg.OUTPUT_LABEL_SIZE) / 2)
                 output_end_index = output_start_index + cfg.OUTPUT_LABEL_SIZE
                 label = label[output_start_index:output_end_index,
                               output_start_index:output_end_index, :]
+                '''
                 example = tf.train.Example(features=tf.train.Features(
                     feature={'image': _bytes_feature(img.tostring()),
                              'label': _bytes_feature(label.tostring())}

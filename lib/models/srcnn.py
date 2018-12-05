@@ -10,28 +10,23 @@ class Srcnn(tf.keras.Model):
         self.c_dim = c_dim
         self.is_grayscale = (c_dim == 1)
         self.is_training = is_training
-        padding_type = 'valid' if self.is_training else 'same'
+        #padding_type = 'valid' if self.is_training else 'same'
+        padding_type = 'same'
 
 
         # Define your layers here.
         self.conv_1 = layers.Conv2D(filters=64, kernel_size=(9, 9),
                                      strides=(1,1), padding=padding_type, 
                                      data_format="channels_last", 
-                                     activation='relu', use_bias=True,
-                                     kernel_initializer=random_normal(stddev=1e-3),
-                                     bias_initializer='zeros')
+                                     activation='relu')
         self.conv_2 = layers.Conv2D(filters=32, kernel_size=(1, 1),
                                      strides=(1,1), padding=padding_type, 
                                      data_format="channels_last", 
-                                     activation='relu', use_bias=True,
-                                     kernel_initializer=random_normal(stddev=1e-3),
-                                     bias_initializer='zeros')
+                                     activation='relu')
         self.conv_3 = layers.Conv2D(filters=c_dim, kernel_size=(5, 5),
                                      strides=(1,1), padding=padding_type, 
                                      data_format="channels_last", 
-                                     activation=None, use_bias=True,
-                                     kernel_initializer=random_normal(stddev=1e-3),
-                                     bias_initializer='zeros',)
+                                     activation='relu')
 
     def call(self, inputs):
         # Define your forward pass here,

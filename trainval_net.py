@@ -65,7 +65,7 @@ def parse_args():
                         default="sgd", type=str)
     parser.add_argument('--lr', dest='lr',
                         help='starting learning rate',
-                        default=0.0001, type=float)
+                        default=0.001, type=float)
     parser.add_argument('--lr_decay_gamma', dest='lr_decay_gamma',
                         help='learning rate decay ratio',
                         default=0.1, type=float)
@@ -128,12 +128,12 @@ if __name__ == '__main__':
     model = Srcnn(cfg.INPUT_IMAGE_SIZE, cfg.OUTPUT_LABEL_SIZE,
                   cfg.CHANNELS)
     # The compile step specifies the training configuration.
-    if args.model == 'srcnn':
-        optimizer = LRMultiplierSGD(lr=cfg.TRAIN.LEARNING_RATE,
-                                    momentum=cfg.TRAIN.MOMENTUM,
-                                    multipliers=[1, 1, 1, 1, 0.1, 0.1])
-    else:
-        optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
+    #if args.model == 'srcnn':
+        #optimizer = LRMultiplierSGD(lr=cfg.TRAIN.LEARNING_RATE,
+                                    #momentum=cfg.TRAIN.MOMENTUM,
+                                    #multipliers=[1, 1, 1, 1, 0.1, 0.1])
+    #else:
+    optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
                                                cfg.TRAIN.MOMENTUM)
     if args.resume:
         args.start_epoch = int(args.checkpoint.split('/')[-1].split['-'][1][-3:])

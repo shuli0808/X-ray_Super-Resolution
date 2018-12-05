@@ -99,13 +99,13 @@ if __name__ == '__main__':
     model = Srcnn(cfg.INPUT_IMAGE_SIZE, cfg.OUTPUT_LABEL_SIZE,
                   cfg.CHANNELS, False)
     # The compile step specifies the training configuration.
-    if args.model == 'srcnn':
-        optimizer = LRMultiplierSGD(lr=cfg.TRAIN.LEARNING_RATE,
-                                    momentum=cfg.TRAIN.MOMENTUM,
-                                    multipliers=[1, 1, 1, 1, 0.1, 0.1])
-    else:
-        optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
-                                               cfg.TRAIN.MOMENTUM)
+    #if args.model == 'srcnn':
+        #optimizer = LRMultiplierSGD(lr=cfg.TRAIN.LEARNING_RATE,
+                                    #momentum=cfg.TRAIN.MOMENTUM,
+                                    #multipliers=[1, 1, 1, 1, 0.1, 0.1])
+    #else:
+    optimizer = tf.train.MomentumOptimizer(cfg.TRAIN.LEARNING_RATE,
+                                           cfg.TRAIN.MOMENTUM)
 
     model.load_weights(args.checkpoint)
     model.compile(optimizer=optimizer,

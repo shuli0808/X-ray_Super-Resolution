@@ -17,8 +17,8 @@ def _parse_record(example_proto, is_test=False):
         im = tf.reshape(im, (cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE,
                              cfg.CHANNELS))
         label = tf.decode_raw(example['label'], tf.float32)
-        label = tf.reshape(label, (cfg.OUTPUT_LABEL_SIZE, cfg.OUTPUT_LABEL_SIZE,
-                                cfg.CHANNELS))
+        label = tf.reshape(label, (cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE,
+                                   cfg.CHANNELS))
         return im, label
     else:
         im = tf.decode_raw(example['image'], tf.float32)
@@ -49,7 +49,7 @@ def get_dataset(mode):
             .map(_parse_record, num_parallel_calls=cfg.TRAIN.NUM_WORKERS)
             # Not sure whether we should use data augmentation
             #.map(train_fn, num_parallel_calls=cfg.TRAIN.NUM_WORKERS)
-            .shuffle(10000)  # can change this number
+            .shuffle(12000)  # can change this number
             .batch(cfg.TRAIN.BATCH_SIZE)
             .repeat()
             .prefetch(1)  # make sure you always have one batch ready to serve
