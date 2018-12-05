@@ -4,7 +4,7 @@ from __future__ import print_function
  
 import tensorflow as tf
 import tensorflow.keras.backend as K
-from tensorflow.keras.callbacks import ReduceLROnPlateau, TensorBoard, ModelCheckpoint
+from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint
 from tensorflow.keras.models import load_model
 import argparse
 import h5py
@@ -17,6 +17,7 @@ from lib.datasets import xray
 from lib.config import cfg, cfg_from_file
 from lib.utils import build_dataset
 from lib.models.LRMultiplierSGD import LRMultiplierSGD
+from lib.models.ReduceOnPlateau import ReduceLROnPlateau
 
 
 def parse_args():
@@ -152,9 +153,9 @@ if __name__ == '__main__':
     save_filepath = os.path.join(args.save_dir,
                                  str(args.session)+"-weights-{epoch:03d}-{val_rmse:.2f}.ckpt")
     callbacks = [
-        ReduceLROnPlateau(monitor='val_rmse', factor=cfg.TRAIN.GAMMA,
-                          patience=3, mode='min', cooldown=1, 
-                          min_delta=1e-3),
+        ReduceOnPlateau(monitor='val_rmse', factor=cfg.TRAIN.GAMMA,
+                        patience=3, mode='min', cooldown=1, 
+                        min_delta=1e-3),
         TensorBoard(log_dir='./logs'),
         ModelCheckpoint(save_filepath, monitor='val_rmse', period=1,
                         save_best_only=True, mode='min', verbose=1,
