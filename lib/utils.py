@@ -108,9 +108,24 @@ def build_dataset(prebuilt=False):
                 label_path = os.path.join(labels_dir, filename_suffix)
                 label = img_to_array(load_img(label_path, color_mode=color_mode,
                                               target_size=None)) / 255.0
-                '''
                 # Maybe implement crop to patches here
-                crop_per_im = int((cfg.ORIGIN_OUTPUT_LABEL_SIZE / cfg.INPUT_IMAGE_SIZE) ** 2)
+                crop_per_im = int((cfg.ORIGIN_OUTPUT_LABEL_SIZE / cfg.INPUT_IMAGE_SIZE)) ** 2
+                crop_per_im_one_dim = int(np.sqrt(crop_per_im))
+                for bx in range(crop_per_im_one_dim):
+                    # crop_and_save(imaeg, output_dir_split, label, size=64)
+                    # Below two lines should also be in the crop_and_save function
+                    for by in range(crop_per_im_one_dim):
+                        x_ind = np.arange(cfg.INPUT_IMAGE_SIZE * bx, cfg.INPUT_IMAGE_SIZE * (bx+1))
+                        y_ind = np.arange(cfg.INPUT_IMAGE_SIZE * by, cfg.INPUT_IMAGE_SIZE * (by+1))
+                        example = tf.train.Example(features=tf.train.Features(
+                            feature={'image': _bytes_feature(img[cfg.INPUT_IMAGE_SIZE * bx: cfg.INPUT_IMAGE_SIZE * (bx+1), 
+                                cfg.INPUT_IMAGE_SIZE * by: cfg.INPUT_IMAGE_SIZE * (by+1), :].tostring()),
+                                'label': _bytes_feature(label[cfg.INPUT_IMAGE_SIZE * bx: cfg.INPUT_IMAGE_SIZE * (bx+1), 
+                                    cfg.INPUT_IMAGE_SIZE * by: cfg.INPUT_IMAGE_SIZE *(by+1), :].tostring())}
+                        ))
+                        writer.write(example.SerializeToString())
+
+                '''
                 sub_img = img.reshape(crop_per_im, cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE, cfg.CHANNELS)
                 #Array that containes the block pixels
                 sub_label = label.reshape(crop_per_im, cfg.INPUT_IMAGE_SIZE, cfg.INPUT_IMAGE_SIZE, cfg.CHANNELS)
@@ -128,16 +143,18 @@ def build_dataset(prebuilt=False):
                     ))
 
                     writer.write(example.SerializeToString())
+                '''
+                '''
                 output_start_index = int((cfg.INPUT_IMAGE_SIZE - cfg.OUTPUT_LABEL_SIZE) / 2)
                 output_end_index = output_start_index + cfg.OUTPUT_LABEL_SIZE
                 label = label[output_start_index:output_end_index,
                               output_start_index:output_end_index, :]
-                '''
                 example = tf.train.Example(features=tf.train.Features(
                     feature={'image': _bytes_feature(img.tostring()),
                              'label': _bytes_feature(label.tostring())}
                 ))
                 writer.write(example.SerializeToString())
+                '''
             else:
                 example = tf.train.Example(features=tf.train.Features(
                     feature={'image': _bytes_feature(img.tostring()),
@@ -150,10 +167,10 @@ def build_dataset(prebuilt=False):
 
     print("Done building dataset")
     return {
-        #'train_count': len(train_image_filenames) * crop_per_im, 
-        'train_count': len(train_image_filenames), 
-        #'val_count': len(val_image_filenames) * crop_per_im, 
-        'val_count': len(val_image_filenames),
+        'train_count': len(train_image_filenames) * crop_per_im, 
+        #'train_count': len(train_image_filenames), 
+        'val_count': len(val_image_filenames) * crop_per_im, 
+        #'val_count': len(val_image_filenames),
         'test_count': len(test_image_filenames)
     }
 

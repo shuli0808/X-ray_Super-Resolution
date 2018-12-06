@@ -45,7 +45,7 @@ def parse_args():
     parser.add_argument('--channels', dest='channels',
                         help='Number of channels',
                         default=1, type=int)
-    parser.add_argument('--num_val', default=4000, type=int, 
+    parser.add_argument('--num_val', default=1000, type=int, 
                         help="Number of validation image")
     parser.add_argument('--model', default='srcnn', type=str, 
                         help="Model name")

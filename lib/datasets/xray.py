@@ -49,7 +49,7 @@ def get_dataset(mode):
             .map(_parse_record, num_parallel_calls=cfg.TRAIN.NUM_WORKERS)
             # Not sure whether we should use data augmentation
             #.map(train_fn, num_parallel_calls=cfg.TRAIN.NUM_WORKERS)
-            .shuffle(12000)  # can change this number
+            .shuffle(15000)  # can change this number
             .batch(cfg.TRAIN.BATCH_SIZE)
             .repeat()
             .prefetch(1)  # make sure you always have one batch ready to serve

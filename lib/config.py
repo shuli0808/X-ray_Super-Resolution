@@ -52,8 +52,8 @@ __C.EXP_DIR = 'default'
 
 # GrayImage or RGB
 __C.CHANNELS = 1
-__C.INPUT_IMAGE_SIZE = 128
-__C.OUTPUT_LABEL_SIZE = 116
+__C.INPUT_IMAGE_SIZE = 32
+__C.OUTPUT_LABEL_SIZE = 32 
 #__C.OUTPUT_START_INDEX = 6
 
 # Crop and resize
