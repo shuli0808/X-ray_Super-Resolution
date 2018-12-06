@@ -136,7 +136,8 @@ if __name__ == '__main__':
     for i in tqdm(range(result.shape[0])):
         filename_suffix = test_image_filenames[i].split('/')[-1]
         # This will rescale image values to be within [0, 255]
-        save_img(os.path.join(output_dir, filename_suffix), result[i], 
-                 data_format='channels_last', scale=True)
+        result[i] = result[i] * 255
+        save_img(os.path.join(output_dir, filename_suffix), result[i].astype(np.uint8), 
+                 data_format='channels_last', scale=False)
 
 

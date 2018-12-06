@@ -15,11 +15,11 @@ class Srcnn(tf.keras.Model):
 
 
         # Define your layers here.
-        self.conv_1 = layers.Conv2D(filters=64, kernel_size=(9, 9),
+        self.conv_1 = layers.Conv2D(filters=128, kernel_size=(9, 9),
                                      strides=(1,1), padding=padding_type, 
                                      data_format="channels_last", 
                                      activation='relu')
-        self.conv_2 = layers.Conv2D(filters=32, kernel_size=(1, 1),
+        self.conv_2 = layers.Conv2D(filters=64, kernel_size=(5, 5),
                                      strides=(1,1), padding=padding_type, 
                                      data_format="channels_last", 
                                      activation='relu')
